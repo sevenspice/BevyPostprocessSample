@@ -1,5 +1,4 @@
 pub mod consts;
-pub mod resources;
 pub mod plugins;
 
 // --- Bevy 基本 ---
@@ -86,6 +85,7 @@ fn setup_load_gltf(
         , Aabb::default()
     );
 
+    commands.spawn(bundle);
     // unlit_gltfs.0.push(commands.spawn(bundle).id());
 }
 
@@ -175,7 +175,7 @@ fn camera_rotation(
         }
 
         if let Ok(transform) = transforms.p1().single_mut() {
-            println!("Model:  {:?}", transform.translation);
+            println!("Model: {:?}", transform.translation);
         }
     }
 }

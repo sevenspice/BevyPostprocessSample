@@ -15,18 +15,18 @@ struct DitherSettings {
 }
 
 struct EdgeSettings {
-    is_enable:       u32 // エッジを適用するかどうか 1=ON 0=OFF
-    , edge_strength: f32 // エッジ強度の検出閾値
+    is_enable:       u32
+    , edge_strength: f32
 #ifdef SIXTEEN_BYTE_ALIGNMENT
     , _edge_padding: vec2<u32>
 #endif
 }
 
 struct PostProcessSettings {
-    is_enable:       u32 // ポストプロセスを適用するかどうか
-    , screen_width:  f32 // 描画幅
-    , screen_height: f32 // 描画高さ
-    , _pad_0:        f32 // ビット埋め（使わない）
+    is_enable:       u32
+    , screen_width:  f32
+    , screen_height: f32
+    , _pad_0:        f32
     , dither: DitherSettings
     , edge: EdgeSettings
 #ifdef SIXTEEN_BYTE_ALIGNMENT
@@ -34,26 +34,6 @@ struct PostProcessSettings {
 #endif
 }
 @group(0) @binding(2) var<uniform> settings: PostProcessSettings;
-
-// -------------------- PICO-8 palette & mapping --------------------
-const PICO8_COLORS: array<vec3<f32>, 16> = array<vec3<f32>, 16>(
-    vec3(0.000, 0.000, 0.000),  //  0 black
-    vec3(0.114, 0.169, 0.325),  //  1 dark-blue   (29,43,83)
-    vec3(0.494, 0.145, 0.325),  //  2 dark-purple (126,37,83)
-    vec3(0.000, 0.529, 0.318),  //  3 dark-green  (0,135,81)
-    vec3(0.671, 0.322, 0.212),  //  4 brown       (171,82,54)
-    vec3(0.373, 0.341, 0.310),  //  5 dark-gray   (95,87,79)
-    vec3(0.761, 0.765, 0.780),  //  6 light-gray  (194,195,199)
-    vec3(1.000, 0.945, 0.910),  //  7 white       (255,241,232)
-    vec3(1.000, 0.000, 0.302),  //  8 red         (255,0,77)
-    vec3(1.000, 0.639, 0.000),  //  9 orange      (255,163,0)
-    vec3(1.000, 0.925, 0.153),  // 10 yellow      (255,236,39)
-    vec3(0.000, 0.894, 0.212),  // 11 green       (0,228,54)
-    vec3(0.161, 0.678, 1.000),  // 12 blue        (41,173,255)
-    vec3(0.514, 0.463, 0.612),  // 13 lilac       (131,118,156)
-    vec3(1.000, 0.467, 0.659),  // 14 pink        (255,119,168)
-    vec3(1.000, 0.800, 0.667)   // 15 peach       (255,204,170)
-);
 
 //
 // === Bayer 2x2 ===
@@ -98,31 +78,6 @@ fn bayer8x8(x: i32, y: i32) -> f32 {
     let ty = y % 8;
     return f32(mat[ty * 8 + tx]) / 64.0;
 }
-
-// ベイヤー行列ID
-const MAT_2X2: u32 = 0u;
-const MAT_4X4: u32 = 1u;
-const MAT_8X8: u32 = 2u;
-
-// PICO-8色ごとに使うベイヤー行列の対応表
-const MAT_OF: array<u32, 16> = array<u32, 16>(
-    MAT_2X2, //  0 black
-    MAT_2X2, //  1 dark-blue
-    MAT_2X2, //  2 dark-purple
-    MAT_2X2, //  3 dark-green
-    MAT_4X4, //  4 brown
-    MAT_2X2, //  5 dark-gray
-    MAT_4X4, //  6 light-gray
-    MAT_8X8, //  7 white
-    MAT_4X4, //  8 red
-    MAT_8X8, //  9 orange
-    MAT_8X8, // 10 yellow
-    MAT_4X4, // 11 green
-    MAT_8X8, // 12 blue
-    MAT_4X4, // 13 lilac
-    MAT_8X8, // 14 pink
-    MAT_8X8  // 15 peach
-);
 
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
